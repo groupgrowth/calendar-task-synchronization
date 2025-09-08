@@ -1,16 +1,19 @@
 services:
-  calendar-task-synchronization:
+  ui:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: calendar-task-synchronization
+      target: streamlit
+    container_name: calendar-ui
     environment:
       - TZ=America/Sao_Paulo
     ports:
       - "8598:8598"
-    restart: always
+    volumes:
+      - calendar_sync_data:/app/config_files
+    restart: unless-stopped
 
-    # Resource constraints (compose, non-Swarm)
+    # Resource constraints
     mem_limit: 768m
     cpus: 0.5
     pids_limit: 256
@@ -23,10 +26,32 @@ services:
         max-size: "10m"
         max-file: "3"
 
-    # Optional: override/ensure healthcheck timing (Dockerfile already defines test)
-    healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8598/_stcore/health"]
-      interval: 30s
-      timeout: 3s
-      retries: 5
-      start_period: 45s
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: scheduler
+    container_name: calendar-scheduler
+    environment:
+      - TZ=America/Sao_Paulo
+      # Every 20 minutes (see note below)
+      - SYNC_CRON=*/20 * * * *
+    volumes:
+      - calendar_sync_data:/app/config_files
+    depends_on:
+      - ui
+    restart: unless-stopped
+
+    # Resource constraints
+    mem_limit: 256m
+    cpus: 0.25
+    pids_limit: 128
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  calendar_sync_data:

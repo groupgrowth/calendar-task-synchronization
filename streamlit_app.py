@@ -128,7 +128,8 @@ def f():
         with st.form('create_sync'):
             name = st.text_input("Nome da sincronização", key="name")
             origin_type = st.radio("Origem das tarefas", options=["Atribuído", "Projetos"], index=0, key="origin_type")
-            origin_value = st.text_input("Valor da origem", key="origin_value", help="ID do atribuído, ou nome dos projetos, separado por vírgula.")
+            title = "ID do atribuído (número inteiro)" if origin_type == "Atribuído" else "Nome dos projetos"
+            origin_value = st.text_input(title, key="origin_value", help="ID do atribuído, ou nome dos projetos, separado por vírgula.")
 
             calendar_id = st.text_input("ID do Calendário", key="calendar_id")
             op_api = st.text_input("API do OpenProjects", key="op_api")
@@ -139,3 +140,5 @@ def f():
 
             if submit:
                 create_sync()
+
+f()

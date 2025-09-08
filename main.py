@@ -135,4 +135,3 @@ if __name__ == "__main__":
 
     config_file_path = sys.argv[1]
     main(config_file_path)
-    
