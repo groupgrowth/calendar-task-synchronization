@@ -66,6 +66,11 @@ def f():
 
     st.markdown("## Sincronizações OpenProject-Calendar")
     st.write("Sincroniza pacotes de trabalho do Open Projects com o Google Calendars.")
+    st.set_page_config(
+        page_title="Sincronizações OpenProject-Calendar", 
+        layout="wide",
+        page_icon="♻️"
+    )
 
     # Lista salvas
     with st.expander("🔄 Sincronizações cadastradas"):
@@ -126,7 +131,7 @@ def f():
             """)
 
         with st.form('create_sync'):
-            name = st.text_input("Nome da sincronização", key="name")
+            name = st.text_input("Dê um nome para sua sincronização", key="name", help="Pode ser o nome do usuário ou do projeto, por exemplo.")
             origin_type = st.radio("Origem das tarefas", options=["Atribuído", "Projetos"], index=0, key="origin_type")
             title = "ID do atribuído (número inteiro)" if origin_type == "Atribuído" else "Nome dos projetos"
             origin_value = st.text_input(title, key="origin_value", help="ID do atribuído, ou nome dos projetos, separado por vírgula.")
