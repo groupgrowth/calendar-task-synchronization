@@ -1,4 +1,5 @@
 Template `config.ini`
+
 ```ini
 [security]
 NAME=

@@ -1,1 +1,1 @@
-Folder where Google key files are stored
+Folder where Google Service Account JSON files are stored

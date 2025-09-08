@@ -23,10 +23,10 @@ Following should be provided to synchronize tasks with the calendar:
 ## Folder Structure
 ```
 OP2GC-Synchronization
-|── automation_of_sync
+|── server_sync
 |   |── Scripts and tutorials for automation
 |── tutorial
-|   |── Explanation of task creation steps
+|   |── gif_show_how_to_create_google_service
 |── LICENSE
 |── main.py
 |── README.md

@@ -1,6 +1,0 @@
-SHELL=/bin/bash
-PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-
-# Sincronização de calendários OpenProject e Google Calendar, a cada 20 minutos
-CALENDAR_FOLDER=/home/ubuntu/calendar-task-synchronization
-*/20 * * * * $CALENDAR_FOLDER/automation_of_sync/synchronization.sh $CALENDAR_FOLDER/.venv/bin/python $CALENDAR_FOLDER/main.py $CALENDAR_FOLDER/config_files

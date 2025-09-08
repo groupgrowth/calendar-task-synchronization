@@ -1,0 +1,18 @@
+SHELL=/bin/bash
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+CALENDAR_FOLDER=/home/root/calendar-task-synchronization
+
+# **Cron Syntax:**
+# ```
+# * * * * * /path/to/script.sh
+# - - - - -
+# | | | | |
+# | | | | +----- Day of the week (0-6) (Sunday=0)
+# | | | +------- Month (1-12)
+# | | +--------- Day of the month (1-31)
+# | +----------- Hour (0-23)
+#  +------------- Minute (0-59)
+
+# Sincronização de calendários OpenProject e Google Calendar, a cada 20 minutos
+
+20 * * * * $CALENDAR_FOLDER/automation_of_sync/synchronization.sh $CALENDAR_FOLDER/.venv/bin/python $CALENDAR_FOLDER/main.py $CALENDAR_FOLDER/config_files

@@ -2,38 +2,18 @@
 # -*- coding: utf-8 -*-
 """
 This program synchronizes OpenProject tasks with Google Calendar.
-Each work package created as a "task" on OpenProject will be represented as an
-event on Google Calendar where "dueHour" of the task is the start of the event.
-Synchronization requires a common structure between `tasks` and `events`. Thus,
-not every information on the work packages is included in event creation.
-Following parameters will be required to create an event, the rest is discarded:
-ID, subject, description, parental relation, assignee, last update date, due date,
-and "dueHour". "dueHour" parameter should be located at the end of the description
-in the form of "dueHour=HH:MM:SS" where H is hour, M is minute, and S is second.
-If the task starts with three exclamations (!) marks, it will not be synchronized.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Google Calendar Task Synchronization Script for Open Project
-%% -------------------
-%% $Author: Halil Said Cankurtaran$,
-%% $Date: January 10th, 2020$,
-%% $Revision: 1.0$
-%% $Tapir Lab.$
-%% $Copyright: Tapir Lab.$
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Google Calendar Task Synchronization Script for Open Project
+---
+Author: GOD,
+Date: August 7th, 2025,
+Revision: 1.0
+
+Copyright: JVCSS.
+---
 
 Known Issues:
-    1. If the due date is not given, the due hour does not have any importance.
-       Event is directly created on the creation time.
-    2. Event creation based on creation time is w.r.t. GMT +0, this is because
-    of the OpenProject configurations. It might be changed or 3 hours added
-    3. If the due date is given but the due hour is not given, then it can not sync.
-    4. General Exception is used to create logs. Google Styleguide also
-    recommends this approach.
-    5. Sheet may end up with "The read operation timed out" if the sheet exceeds
-    a certain number of logs. This problem occurs when 918th synchronization
-    has been performed. Thus, the sheet should be cleaned periodically.
-    6. All the tasks should be listed in one page on OpenProject.
+
 """
 import json
 from datetime import datetime, timedelta

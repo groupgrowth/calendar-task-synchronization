@@ -2,25 +2,15 @@
 # -*- coding: utf-8 -*-
 """
 This program synchronizes OpenProject tasks with Google Calendar.
-Each work package created as a "task" on OpenProject will be represented as an
-event on Google Calendar where "dueHour" of the task is the start of the event.
-Synchronization requires a common structure between `tasks` and `events`. Thus,
-not every information on the work packages is included in event creation.
-Following parameters will be required to create an event, the rest is discarded:
-ID, subject, description, parental relation, assignee, last update date, due date,
-and "dueHour". "dueHour" parameter should be located at the end of the description
-in the form of "dueHour=HH:MM:SS" where H is hour, M is minute, and S is second.
-If the task starts with three exclamations (!) marks, it will not be synchronized.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% Google Calendar Task Synchronization Script for Open Project
-%% -------------------
-%% $Author: Halil Said Cankurtaran$,
-%% $Date: January 10th, 2020$,
-%% $Revision: 1.0$
-%% $Tapir Lab.$
-%% $Copyright: Tapir Lab.$
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# Google Calendar Task Synchronization Script for Open Project
+---
+Author: GOD,
+Date: August 7th, 2025,
+Revision: 1.0
+
+Copyright: JVCSS.
+
 """
 import sys
 from datetime import datetime
