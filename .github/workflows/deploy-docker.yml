@@ -1,0 +1,80 @@
+name: Deploy (SSH + Docker Compose)
+
+on:
+  push:
+    branches: [prod] # change if needed (e.g., main)
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-calendar-task-synchronization
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          REPO_URL: git@github.com:groupgrowth/calendar-task-synchronization.git # use SSH URL (recommended) or HTTPS
+          APP_DIR: /opt/apps/calendar-task-synchronization # target folder on the server
+          BRANCH: prod # branch to deploy
+          # Set to "true" if you need to pull private images from GHCR (or another registry)
+          USE_GHCR: "false"
+          GHCR_USER: ${{ github.actor }} # or a service user
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }} # PAT with read:packages on the server side
+        with:
+          host: ${{ secrets.SSH_HOST_32GB }} # e.g., your EC2 public IP / DNS
+          username: ${{ secrets.SSH_USER_32GB }} # e.g., root, ubuntu or publisher
+          key: ${{ secrets.SSH_KEY_32GB }} # private key matching an authorized_key on the VM
+          envs: REPO_URL,APP_DIR,BRANCH,USE_GHCR,GHCR_USER,GHCR_TOKEN
+          script: |
+            set -euo pipefail
+
+            # 0) Ensure Docker & Compose exist (noop if already installed).
+            if ! command -v docker >/dev/null 2>&1; then
+              echo "Docker not found. Please install Docker and docker compose on the server."
+              exit 1
+            fi
+
+            # 1) Ensure user is in the docker group to avoid using sudo with docker commands
+            if ! groups | grep -q '\bdocker\b'; then
+              echo "User 'root' must belong to 'docker' group (sudo usermod -aG docker root && newgrp docker)."
+              exit 1
+            fi
+
+            # 2) Prepare folder & clone/update repository
+            if [ ! -d "$APP_DIR/.git" ]; then
+              mkdir -p "$APP_DIR"
+              chown -R "$USER":"$USER" "$APP_DIR"
+              git clone --depth=1 --branch "$BRANCH" "$REPO_URL" "$APP_DIR"
+            fi
+
+            cd "$APP_DIR"
+            git fetch --prune origin
+            git checkout "$BRANCH"
+            git reset --hard "origin/$BRANCH"
+
+            # 3) (Optional) Log in to GHCR or another registry to pull private images
+            if [ "${USE_GHCR}" = "true" ]; then
+              echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USER}" --password-stdin
+            fi
+
+            # 4) Compose deploy
+            # Pull images first (safe even if you build locally)
+            docker compose pull || true
+
+            # Stop old stack and remove orphans
+            docker compose down --remove-orphans
+
+            # Build (if needed) and start
+            docker compose up -d --build
+
+            # 5) Optional cleanup
+            docker image prune -f
+
+            # 6) Basic health check (customize as needed)
+            docker compose ps
+
+            echo "Deployment completed."
