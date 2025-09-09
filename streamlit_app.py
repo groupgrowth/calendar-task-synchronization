@@ -72,6 +72,16 @@ def f():
         page_icon="♻️"
     )
 
+    with st.expander("👨🏻‍🏫 Como obter credenciais do Google"):
+        st.markdown("""
+            Para obter as credenciais necessárias para a sincronização, siga os passos abaixo:
+            1. Acesse o [Google Cloud Console](https://console.cloud.google.com/).
+            2. Crie um novo projeto ou selecione um projeto existente.
+            3. Ative as APIs do Google Calendar e Google Sheets para o projeto.
+            4. Crie uma conta de serviço e gere uma chave JSON.
+            5. Compartilhe o calendário do Google com o e-mail da conta de serviço.
+        """)
+
     # Lista salvas
     with st.expander("🔄 Sincronizações cadastradas"):
 
@@ -136,14 +146,23 @@ def f():
             title = "ID do atribuído (número inteiro)" if origin_type == "Atribuído" else "Nome dos projetos"
             origin_value = st.text_input(title, key="origin_value", help="ID do atribuído, ou nome dos projetos, separado por vírgula.")
 
-            calendar_id = st.text_input("ID do Calendário", key="calendar_id")
+            calendar_id = st.text_input("ID do Calendário", key="calendar_id", help="Normalmente é o e-mail do calendário.")
             op_api = st.text_input("API do OpenProjects", key="op_api")
-            sheet_id = st.text_input("ID da planilha do Google Sheet", key="sheet_id")
+            sheet_id = st.text_input("ID da planilha do Google Sheet", key="sheet_id", help="O texto na parte do URL que vem depois de '/d/' e antes de '/edit'")
             sa_keys = st.file_uploader(label="Arquivo JSON de chaves da conta de serviço do Google", key="sa_keys")
 
             submit = st.form_submit_button("Salvar")
 
             if submit:
                 create_sync()
+                # how to reset the form
+                st.session_state["name"] = ""
+                st.session_state["origin_type"] = "Atribuído"
+                st.session_state["origin_value"] = ""
+                st.session_state["calendar_id"] = ""
+                st.session_state["op_api"] = ""
+                st.session_state["sheet_id"] = ""
+                st.session_state["sa_keys"] = None
+                st.rerun()
 
 f()
