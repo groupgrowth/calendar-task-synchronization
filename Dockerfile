@@ -56,7 +56,7 @@ RUN printf '%s\n' '#!/bin/bash' \
   'shopt -s nullglob' \
   'for ini in /app/config_files/*.ini; do' \
   '  echo "$(date -Is) [sync] Running $ini"' \
-  '  python /app/main.py "$ini"' \
+  '  /usr/local/bin/python /app/main.py "$ini"' \
   'done' > /usr/local/bin/run_sync.sh \
  && chmod +x /usr/local/bin/run_sync.sh
 
