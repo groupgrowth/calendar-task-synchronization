@@ -37,11 +37,12 @@ jobs:
               exit 1
             fi
 
-            # # 1) Ensure user is in the docker group
-            # if ! groups | grep -q '\bdocker\b'; then
-            #   echo "User must belong to 'docker' group (sudo usermod -aG docker $USER && newgrp docker)."
-            #   exit 1
-            # fi
+            # 1) Ensure user is in the docker group
+            if ! groups | grep -q '\bdocker\b'; then
+              echo "User must belong to 'docker' group (sudo usermod -aG docker $USER && newgrp docker)."
+              exit 1
+            fi
+            echo "User is in 'docker' group."
 
             # # 2) Prepare folder & clone/update repository
             # if [ ! -d "$APP_DIR/.git" ]; then
