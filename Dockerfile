@@ -31,7 +31,7 @@ RUN useradd -ms /bin/bash appuser \
  && mkdir -p /app/config_files/keys \
  && chown -R appuser:appuser /app
 
-# ----- STREAMLIT STAGE -----
+# ----- STREAMLIT STAGE ----
 FROM base AS streamlit
 USER appuser
 EXPOSE 8598
