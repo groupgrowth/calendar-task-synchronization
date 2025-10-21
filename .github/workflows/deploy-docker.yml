@@ -2,7 +2,7 @@ name: Deploy (SSH + Docker Compose)
 
 on:
   push:
-    branches: [prod] # change if needed (e.g., main)
+    branches: [prod]
   workflow_dispatch:
 
 concurrency:
@@ -31,19 +31,21 @@ jobs:
           script: |
             set -euo pipefail
 
-            # 0) Ensure Docker & Compose exist (noop if already installed).
+            # 0) Ensure Docker & Compose exist
             if ! command -v docker >/dev/null 2>&1; then
               echo "Docker not found. Please install Docker and docker compose on the server."
               exit 1
             fi
 
-            # 1) Ensure user is in the docker group to avoid using sudo with docker commands
+            # 1) Ensure user is in the docker group
             if ! groups | grep -q '\bdocker\b'; then
-              echo "User 'root' must belong to 'docker' group (sudo usermod -aG docker root && newgrp docker)."
+              echo "User must belong to 'docker' group (sudo usermod -aG docker $USER && newgrp docker)."
               exit 1
             fi
 
-            export GIT_SSH_COMMAND="ssh -F ~/.ssh/config"
+            # Configure SSH for git operations (MUST be before any git command)
+            export GIT_SSH_COMMAND="ssh -F ~/.ssh/config -o StrictHostKeyChecking=no"
+            ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2>/dev/null || true
 
             # 2) Prepare folder & clone/update repository
             if [ ! -d "$APP_DIR/.git" ]; then
@@ -57,25 +59,20 @@ jobs:
             git checkout "$BRANCH"
             git reset --hard "origin/$BRANCH"
 
-            # 3) (Optional) Log in to GHCR or another registry to pull private images
+            # 3) (Optional) Log in to GHCR
             if [ "${USE_GHCR}" = "true" ]; then
               echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USER}" --password-stdin
             fi
 
             # 4) Compose deploy
-            # Pull images first (safe even if you build locally)
             docker compose pull || true
-
-            # Stop old stack and remove orphans
             docker compose down --remove-orphans
-
-            # Build (if needed) and start
             docker compose up -d --build
 
             # 5) Optional cleanup
             docker image prune -f
 
-            # 6) Basic health check (customize as needed)
+            # 6) Basic health check
             docker compose ps
 
             echo "Deployment completed."
