@@ -17,17 +17,16 @@ jobs:
       - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.2.0
         env:
-          REPO_URL: git@github-sync:groupgrowth/calendar-task-synchronization.git # use SSH URL (recommended) or HTTPS
-          APP_DIR: /opt/apps/calendar-task-synchronization # target folder on the server
-          BRANCH: prod # branch to deploy
-          # Set to "true" if you need to pull private images from GHCR (or another registry)
+          REPO_URL: git@github-sync:groupgrowth/calendar-task-synchronization.git
+          APP_DIR: /opt/apps/calendar-task-synchronization
+          BRANCH: prod
           USE_GHCR: "false"
-          GHCR_USER: ${{ github.actor }} # or a service user
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }} # PAT with read:packages on the server side
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         with:
-          host: ${{ secrets.SSH_HOST_32GB }} # e.g., your EC2 public IP / DNS
-          username: ${{ secrets.SSH_USER_32GB }} # e.g., root, ubuntu or publisher
-          key: ${{ secrets.SSH_KEY_32GB }} # private key matching an authorized_key on the VM
+          host: ${{ secrets.SSH_HOST_32GB }}
+          username: ${{ secrets.SSH_USER_32GB }}
+          key: ${{ secrets.SSH_KEY_32GB }}
           envs: REPO_URL,APP_DIR,BRANCH,USE_GHCR,GHCR_USER,GHCR_TOKEN
           script: |
             set -euo pipefail
@@ -43,6 +42,8 @@ jobs:
               echo "User 'root' must belong to 'docker' group (sudo usermod -aG docker root && newgrp docker)."
               exit 1
             fi
+
+            export GIT_SSH_COMMAND="ssh -F ~/.ssh/config"
 
             # 2) Prepare folder & clone/update repository
             if [ ! -d "$APP_DIR/.git" ]; then
