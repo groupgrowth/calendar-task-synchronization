@@ -52,25 +52,25 @@ jobs:
             fi
             echo "Repository is present."
 
-            # cd "$APP_DIR"
-            # git fetch --prune origin
-            # git checkout "$BRANCH"
-            # git reset --hard "origin/$BRANCH"
+            cd "$APP_DIR"
+            git fetch --prune origin
+            git checkout "$BRANCH"
+            git reset --hard "origin/$BRANCH"
 
-            # # 3) (Optional) Log in to GHCR
-            # if [ "${USE_GHCR}" = "true" ]; then
-            #   echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USER}" --password-stdin
-            # fi
+            # 3) (Optional) Log in to GHCR
+            if [ "${USE_GHCR}" = "true" ]; then
+              echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USER}" --password-stdin
+            fi
 
-            # # 4) Compose deploy
-            # docker compose pull || true
-            # docker compose down --remove-orphans
-            # docker compose up -d --build
+            # 4) Compose deploy
+            docker compose pull || true
+            docker compose down --remove-orphans
+            docker compose up -d --build
 
-            # # 5) Optional cleanup
-            # docker image prune -f
+            # 5) Optional cleanup
+            docker image prune -f
 
-            # # 6) Basic health check
-            # docker compose ps
+            # 6) Basic health check
+            docker compose ps
 
-            # echo "Deployment completed."
+            echo "Deployment completed."
