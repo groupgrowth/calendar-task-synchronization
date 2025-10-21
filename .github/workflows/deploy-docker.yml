@@ -45,11 +45,12 @@ jobs:
             echo "User is in 'docker' group."
 
             # # 2) Prepare folder & clone/update repository
-            # if [ ! -d "$APP_DIR/.git" ]; then
-            #   mkdir -p "$APP_DIR"
-            #   chown -R "$USER":"$USER" "$APP_DIR"
-            #   git clone --depth=1 --branch "$BRANCH" "$REPO_URL" "$APP_DIR"
-            # fi
+            if [ ! -d "$APP_DIR/.git" ]; then
+              mkdir -p "$APP_DIR"
+              chown -R "$USER":"$USER" "$APP_DIR"
+              git clone --depth=1 --branch "$BRANCH" "$REPO_URL" "$APP_DIR"
+            fi
+            echo "Repository is present."
 
             # cd "$APP_DIR"
             # git fetch --prune origin
